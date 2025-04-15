@@ -5,6 +5,7 @@ import { useState } from "react";
 import { createClient } from "@/libs/supabase/client";
 import toast from "react-hot-toast";
 import config from "@/config";
+import { trackEvent } from "@/libs/trackEvent";
 
 // This a login/singup page for Supabase Auth.
 // Successfull login redirects to /api/auth/callback where the Code Exchange is processed (see app/api/auth/callback/route.js).
@@ -30,6 +31,14 @@ export default function Login() {
             redirectTo: redirectURL,
           },
         });
+
+        // Track OAuth sign-up event
+        trackEvent("signup_oauth", {
+          email: email,
+          buttonId: "oauth_signup",
+          section: "Sign-up",
+          provider,
+        });
       } else if (type === "magic_link") {
         await supabase.auth.signInWithOtp({
           email,
@@ -41,9 +50,20 @@ export default function Login() {
         toast.success("Check your emails!");
 
         setIsDisabled(true);
+
+        // Track magic link sign-up event
+        trackEvent("signup_magic_link", {
+          email: email,
+          buttonId: "magic_link_signup",
+          section: "Sign-up",
+          provider: "email",
+        });
       }
     } catch (error) {
       console.log(error);
+
+      // Track error event
+      trackEvent("signup_error", { error: error.message });
     } finally {
       setIsLoading(false);
     }
@@ -53,12 +73,7 @@ export default function Login() {
     <main className="p-8 md:p-24" data-theme={config.colors.theme}>
       <div className="text-center mb-4">
         <Link href="/" className="btn btn-ghost btn-sm">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            className="w-5 h-5"
-          >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
             <path
               fillRule="evenodd"
               d="M15 10a.75.75 0 01-.75.75H7.612l2.158 1.96a.75.75 0 11-1.04 1.08l-3.5-3.25a.75.75 0 010-1.08l3.5-3.25a.75.75 0 111.04 1.08L7.612 9.25h6.638A.75.75 0 0115 10z"
@@ -75,19 +90,21 @@ export default function Login() {
       <div className="space-y-8 max-w-xl mx-auto">
         <button
           className="btn btn-block"
-          onClick={(e) =>
-            handleSignup(e, { type: "oauth", provider: "google" })
-          }
+          onClick={(e) => {
+            handleSignup(e, { type: "oauth", provider: "google" });
+            trackEvent("signup_oauth", {
+              email: email,
+              buttonId: "google_signup",
+              section: "Sign-up",
+              provider: "google",
+            });
+          }}
           disabled={isLoading}
         >
           {isLoading ? (
             <span className="loading loading-spinner loading-xs"></span>
           ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6"
-              viewBox="0 0 48 48"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 48 48">
               <path
                 fill="#FFC107"
                 d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"
@@ -109,14 +126,9 @@ export default function Login() {
           Sign-up with Google
         </button>
 
-        <div className="divider text-xs text-base-content/50 font-medium">
-          OR
-        </div>
+        <div className="divider text-xs text-base-content/50 font-medium">OR</div>
 
-        <form
-          className="form-control w-full space-y-4"
-          onSubmit={(e) => handleSignup(e, { type: "magic_link" })}
-        >
+        <form className="form-control w-full space-y-4" onSubmit={(e) => handleSignup(e, { type: "magic_link" })}>
           <input
             required
             type="email"
@@ -127,14 +139,8 @@ export default function Login() {
             onChange={(e) => setEmail(e.target.value)}
           />
 
-          <button
-            className="btn btn-primary btn-block"
-            disabled={isLoading || isDisabled}
-            type="submit"
-          >
-            {isLoading && (
-              <span className="loading loading-spinner loading-xs"></span>
-            )}
+          <button className="btn btn-primary btn-block" disabled={isLoading || isDisabled} type="submit">
+            {isLoading && <span className="loading loading-spinner loading-xs"></span>}
             Send Magic Link
           </button>
         </form>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import apiClient from "@/libs/api";
 import config from "@/config";
+import { trackEvent } from "@/libs/trackEvent";
 
 // This component is used to create Stripe Checkout Sessions
 // It calls the /api/stripe/create-checkout route with the priceId, successUrl and cancelUrl
@@ -33,7 +34,15 @@ const ButtonCheckout = ({ priceId, mode = "subscription" }) => {
   return (
     <button
       className="btn btn-primary btn-block group"
-      onClick={() => handlePayment()}
+      onClick={() => {
+        handlePayment();
+        trackEvent("checkout", {
+          buttonId: "pricing_btn",
+          section: "Pricing",
+          plan: priceId,
+          mode,
+        });
+      }}
     >
       {isLoading ? (
         <span className="loading loading-spinner loading-xs"></span>
