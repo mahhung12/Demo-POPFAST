@@ -52,13 +52,13 @@ const TableRow: React.FC<TableRowProps> = ({ children, className }) => {
 };
 
 // TableCell Component
-const TableCell: React.FC<TableCellProps> = ({
-  children,
-  isHeader = false,
-  className,
-}) => {
+const TableCell: React.FC<TableCellProps> = ({ children, isHeader = false, className }) => {
   const CellTag = isHeader ? "th" : "td";
   return <CellTag className={` ${className}`}>{children}</CellTag>;
 };
 
-export { Table, TableHeader, TableBody, TableRow, TableCell };
+const TableHead: React.FC<TableHeaderProps> = ({ children, className }) => {
+  return <thead className={`bg-gray-200 ${className}`}>{children}</thead>;
+};
+
+export { Table, TableHeader, TableBody, TableRow, TableCell, TableHead };
