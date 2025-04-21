@@ -1,9 +1,6 @@
 "use client";
-import Image from "next/image";
+import { useEffect, useState } from "react";
 import CountryMap from "./CountryMap";
-import { useState, useEffect } from "react";
-import { Dropdown } from "../ui/dropdown/Dropdown";
-import { DropdownItem } from "../ui/dropdown/DropdownItem";
 
 interface EventData {
   id: string;
@@ -15,16 +12,7 @@ interface EventData {
 }
 
 export default function DemographicCard({ events }: { events: EventData[] }) {
-  const [isOpen, setIsOpen] = useState(false);
   const [countryData, setCountryData] = useState<{ country: string; count: number; percentage: number }[]>([]);
-
-  function toggleDropdown() {
-    setIsOpen(!isOpen);
-  }
-
-  function closeDropdown() {
-    setIsOpen(false);
-  }
 
   useEffect(() => {
     // Aggregate data by country

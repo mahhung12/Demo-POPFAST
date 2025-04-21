@@ -19,7 +19,7 @@ export const EcommerceMetrics = ({ events }: EcommerceMetricsProps) => {
   // Calculate metrics
   const totalEvents = events.length;
   const signupOAuthCount = events.filter((e) => e.event_type === "signup_oauth").length;
-  const signupMagicLinkCount = events.filter((e) => e.event_type === "signup_magic_link").length;
+  // const signupMagicLinkCount = events.filter((e) => e.event_type === "signup_magic_link").length;
   const checkoutCount = events.filter((e) => e.event_type === "checkout").length;
 
   // Calculate unique users (if email is available)

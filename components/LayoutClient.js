@@ -1,13 +1,13 @@
 "use client";
 
-import { createClient } from "@/libs/supabase/client";
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import config from "@/config";
+import { createClient } from "@/utils/supabase/client";
 import { Crisp } from "crisp-sdk-web";
+import { usePathname } from "next/navigation";
 import NextTopLoader from "nextjs-toploader";
+import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { Tooltip } from "react-tooltip";
-import config from "@/config";
 
 // Crisp customer chat support:
 // This component is separated from ClientLayout because it needs to be wrapped with <SessionProvider> to use useSession() hook
@@ -29,7 +29,7 @@ const CrispChat = () => {
       }
     };
     getUser();
-  }, []);
+  }, [supabase.auth]);
 
   useEffect(() => {
     if (config?.crisp?.id) {
@@ -68,26 +68,26 @@ const CrispChat = () => {
 const ClientLayout = ({ children }) => {
   return (
     <>
-      {/* Show a progress bar at the top when navigating between pages */}
-      <NextTopLoader color={config.colors.main} showSpinner={false} />
+      {/* Show a progress bar at the top when navigating between pages */ }
+      <NextTopLoader color={ config.colors.main } showSpinner={ false } />
 
-      {/* Content inside app/page.js files  */}
-      {children}
+      {/* Content inside app/page.js files  */ }
+      { children }
 
-      {/* Show Success/Error messages anywhere from the app with toast() */}
+      {/* Show Success/Error messages anywhere from the app with toast() */ }
       <Toaster
-        toastOptions={{
+        toastOptions={ {
           duration: 3000,
-        }}
+        } }
       />
 
-      {/* Show tooltips if any JSX elements has these 2 attributes: data-tooltip-id="tooltip" data-tooltip-content="" */}
+      {/* Show tooltips if any JSX elements has these 2 attributes: data-tooltip-id="tooltip" data-tooltip-content="" */ }
       <Tooltip
         id="tooltip"
         className="z-[60] !opacity-100 max-w-sm shadow-lg"
       />
 
-      {/* Set Crisp customer chat support */}
+      {/* Set Crisp customer chat support */ }
       <CrispChat />
     </>
   );

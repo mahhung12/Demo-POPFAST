@@ -2,14 +2,13 @@ import React from "react";
 
 interface ChartTabProps {
   selected: "optionOne" | "optionTwo" | "optionThree";
+  // eslint-disable-next-line no-unused-vars
   onChange: (option: "optionOne" | "optionTwo" | "optionThree") => void;
 }
 
 const ChartTab: React.FC<ChartTabProps> = ({ selected, onChange }) => {
   const getButtonClass = (option: "optionOne" | "optionTwo" | "optionThree") =>
-    selected === option
-      ? "bg-gray-400 text-white shadow-theme-xs" 
-      : "bg-gray-100 text-gray-700 hover:bg-gray-300"; 
+    selected === option ? "bg-gray-400 text-white shadow-theme-xs" : "bg-gray-100 text-gray-700 hover:bg-gray-300";
 
   return (
     <div className="flex items-center gap-1 rounded-lg">

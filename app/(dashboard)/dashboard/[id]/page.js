@@ -28,7 +28,7 @@ export default async function Dashboard() {
   }
 
   return (
-    <div className="max-w-[1920px] px-16 py-8 mx-auto grid grid-cols-12 gap-4 md:gap-6">
+    <div className="max-w-[1440px] px-16 py-8 mx-auto grid grid-cols-12 gap-4 md:gap-6">
       <div className="col-span-12 space-y-6 xl:col-span-7">
         <EcommerceMetrics events={ trackingEvents || [] } />
 
