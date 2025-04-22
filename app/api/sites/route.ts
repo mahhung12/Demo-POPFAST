@@ -48,29 +48,28 @@ export async function POST(req: Request) {
         return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
     }
 }
-
-export async function GET() {
+export async function GET(req: Request) {
     try {
         const supabase = createClient();
 
-        // Get the user
-        const {
-            data: { user },
-            error: authError,
-        } = await supabase.auth.getUser();
+        // Parse the query parameters from the request URL
+        const url = new URL(req.url);
+        const userId = url.searchParams.get('user_id'); // Get user_id from query params
 
-        if (authError || !user) {
-            console.error('Auth Error:', authError);
-            return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+        if (!userId) {
+            return NextResponse.json({ success: false, error: 'User ID is required' }, { status: 400 });
         }
 
-        console.log('User:', user);
-
-        // Fetch all sites for the user
+        // Fetch sites and join with pageviews table
         const { data, error } = await supabase
             .from('sites')
-            .select('*')
-            .eq('user_id', user.id);
+            .select(`
+                *,
+                pageviews (
+                    *
+                )
+            `)
+            .eq('user_id', userId);
 
         if (error) {
             return NextResponse.json({ success: false, error: error.message }, { status: 500 });

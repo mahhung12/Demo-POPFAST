@@ -1,4 +1,6 @@
-import ButtonAccount from "@/components/ButtonAccount";
+import Button from "@/components/ui/button/Button";
+import { getSites } from "@/libs/dashboard/site";
+import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -6,38 +8,58 @@ export const dynamic = "force-dynamic";
 // This is a private page: It's protected by the layout.js component which ensures the user is authenticated.
 // It's a server component which means you can fetch data (like the user profile) before the page is rendered.
 // See https://shipfa.st/docs/tutorials/private-page
-export default function Dashboard() {
-  // const sites = 
+export default async function Dashboard() {
+  const supabase = await createClient();
 
-  const dashboards = [
-    { id: 1, name: "Dashboard 1", visitors: 1200 },
-    { id: 2, name: "Dashboard 2", visitors: 800 },
-    { id: 3, name: "Dashboard 3", visitors: 450 },
-  ];
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const sites = await getSites(user.id);
 
   return (
-    <div className="max-w-[1440px] px-16 py-8 mx-auto">
-      <div className="flex justify-between items-center">
-        <ButtonAccount />
-        <Link href="/dashboard/new">
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Create New Dashboard</button>
-        </Link>
-      </div>
-      <h1 className="text-3xl md:text-4xl font-extrabold mt-16">Private Page</h1>
-      <div className="flex flex-wrap gap-4 mt-4">
-        { dashboards.map((dashboard) => (
-          <Link
-            key={ dashboard.id }
-            href={ `/dashboard/${dashboard.id}` }
-            className="w-full sm:w-[calc(50%-8px)] md:w-[calc(33.333%-10.666px)]"
+    <div className="flex flex-col gap-4">
+      <Link href="/dashboard/new">
+        <button className="px-4 py-2 rounded-md bg-gray-200 border bg-inherit !text-black transition-colors flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-plus size-4"
           >
-            <div className="border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow cursor-pointer">
-              <h2 className="text-xl font-bold">{ dashboard.name }</h2>
-              <p className="text-gray-600">Total Visitors: { dashboard.visitors }</p>
-            </div>
-          </Link>
-        )) }
-      </div>
+            <path d="M5 12h14"></path>
+            <path d="M12 5v14"></path>
+          </svg>
+          Website
+        </button>
+      </Link>
+
+      {!sites || sites.length === 0 ? (
+        <div className="max-w-[1440px]">
+          <p className="mt-2">You don&#39;t have any sites yet. Create one to get started.</p>
+        </div>
+      ) : (
+        <div className="w-full flex flex-wrap gap-4">
+          {sites.map((dashboard) => (
+            <Link
+              key={dashboard.id}
+              href={`/dashboard/${dashboard.id}`}
+              className="w-full sm:w-[calc(50%-8px)] md:w-[calc(33.333%-10.666px)]"
+            >
+              <div className="border rounded-md p-4 hover:shadow-lg transition-shadow cursor-pointer">
+                <h2 className="text-xl font-bold">{dashboard.name}</h2>
+                <p className="text-gray-600 mt-12">Total Visitors: {dashboard.pageviews.length || 0}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

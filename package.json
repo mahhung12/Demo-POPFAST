@@ -19,6 +19,10 @@
     "@supabase/supabase-js": "^2.49.4",
     "apexcharts": "^4.5.0",
     "axios": "^1.6.8",
+<<<<<<< HEAD
+=======
+    "chart.js": "^4.4.9",
+>>>>>>> 6c954411b0f003bb337d4344316d84b1819f092f
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "crisp-sdk-web": "^1.0.22",

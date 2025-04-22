@@ -22,28 +22,45 @@ export async function createSite({ domain, timezone, name }) {
   }
 }
 
-export async function getSites(token) {
+export async function getSites(userId) {
   try {
-    const url = `${BASE_URL}/api/sites`;
-    console.log('url', url);
+    const url = `${BASE_URL}/api/sites?user_id=${userId}`; // Pass user_id as a query parameter
 
-    const response = await fetch(`${url}`, {
+    const response = await fetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-      },
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const { sites, success } = await response.json();
+
+    if (!success) {
+      throw new Error("Failed to fetch sites");
+    }
+
+    return sites;
+  } catch (error) {
+    console.error("Error fetching sites:", error);
+    throw new Error(error.message || "An error occurred while fetching the sites");
+  }
+}
+
+export async function getSiteById(siteId) {
+  try {
+    const response = await fetch(`/api/sites/${siteId}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
     });
 
     const result = await response.json();
 
     if (!response.ok) {
-      throw new Error(result.error || "Failed to fetch sites");
+      throw new Error(result.error || "Failed to fetch site details");
     }
 
-    return result; // Return the fetched sites data
+    console.log("Site Details:", result.site);
+    return result.site;
   } catch (error) {
-    console.log('error', error);
-    throw new Error(error.message || "An error occurred while fetching the sites");
+    console.error("Error fetching site details:", error);
+    throw error;
   }
 }
