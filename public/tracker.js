@@ -30,8 +30,6 @@
       device: ua.device.type || "desktop",
     };
 
-    console.log("Tracker payload:", payload);
-
     // Uncomment to send the payload
     navigator.sendBeacon("http://localhost:3000/api/collect", JSON.stringify(payload));
   } catch (err) {

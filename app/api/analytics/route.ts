@@ -13,8 +13,6 @@ export async function POST(req: NextRequest) {
     const userAgent = req.headers.get('user-agent') || ''
     const ip = req.headers.get('x-forwarded-for') || req.ip || ''
 
-    console.log('req.headers', req.headers)
-
     const request = {
         url,
         event_type: eventType,

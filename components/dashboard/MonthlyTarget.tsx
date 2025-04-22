@@ -9,19 +9,13 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-interface EventData {
-  id: string;
-  event_type: string;
-  timestamp: string;
-}
-
-export default function MonthlyTarget({ events }: { events: EventData[] }) {
+export default function MonthlyTarget({ events }: { events: any }) {
   const [progress, setProgress] = useState(0); // Progress percentage
 
   useEffect(() => {
-    // Calculate progress based on the number of events
-    const target = 100; // Example target (e.g., 100 events)
-    const achieved = events.length; // Number of events
+    // Calculate progress based on the number of pageviews
+    const target = 100; // Example target (e.g., 100 pageviews)
+    const achieved = events.pageviews.length; // Total number of pageviews
     const calculatedProgress = Math.min((achieved / target) * 100, 100); // Cap at 100%
     setProgress(calculatedProgress);
   }, [events]);

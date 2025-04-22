@@ -1,7 +1,6 @@
 "use client";
 
 import config from "@/config";
-import { trackEvent } from "@/libs/trackEvent";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { useState } from "react";
@@ -33,12 +32,12 @@ export default function Login() {
         });
 
         // Track OAuth sign-up event
-        trackEvent("signup_oauth", {
-          email: email,
-          buttonId: "oauth_signup",
-          section: "Sign-up",
-          provider,
-        });
+        // trackEvent("signup_oauth", {
+        //   email: email,
+        //   buttonId: "oauth_signup",
+        //   section: "Sign-up",
+        //   provider,
+        // });
       } else if (type === "magic_link") {
         await supabase.auth.signInWithOtp({
           email,
@@ -52,18 +51,18 @@ export default function Login() {
         setIsDisabled(true);
 
         // Track magic link sign-up event
-        trackEvent("signup_magic_link", {
-          email: email,
-          buttonId: "magic_link_signup",
-          section: "Sign-up",
-          provider: "email",
-        });
+        // trackEvent("signup_magic_link", {
+        //   email: email,
+        //   buttonId: "magic_link_signup",
+        //   section: "Sign-up",
+        //   provider: "email",
+        // });
       }
     } catch (error) {
       console.log(error);
 
       // Track error event
-      trackEvent("signup_error", { error: error.message });
+      // trackEvent("signup_error", { error: error.message });
     } finally {
       setIsLoading(false);
     }

@@ -2,32 +2,23 @@
 import { useEffect, useState } from "react";
 import CountryMap from "./CountryMap";
 
-interface EventData {
-  id: string;
-  event_type: string;
-  timestamp: string;
-  metadata: {
-    country?: string; // Add country field if available in metadata
-  };
-}
-
-export default function DemographicCard({ events }: { events: EventData[] }) {
+export default function DemographicCard({ events }: { events: any }) {
   const [countryData, setCountryData] = useState<{ country: string; count: number; percentage: number }[]>([]);
 
   useEffect(() => {
     // Aggregate data by country
     const countryCounts: Record<string, number> = {};
-    events.forEach((event) => {
-      const country = event.metadata?.country || "Unknown"; // Default to "Unknown" if no country is provided
+    events.pageviews.forEach((event) => {
+      const country = event.country || "Unknown"; // Default to "Unknown" if no country is provided
       countryCounts[country] = (countryCounts[country] || 0) + 1;
     });
 
-    // Calculate total customers and percentages
-    const totalCustomers = Object.values(countryCounts).reduce((sum, count) => sum + count, 0);
+    // Calculate total pageviews and percentages
+    const totalPageviews = Object.values(countryCounts).reduce((sum, count) => sum + count, 0);
     const aggregatedData = Object.entries(countryCounts).map(([country, count]) => ({
       country: country || "Unknown country",
       count,
-      percentage: Math.round((count / totalCustomers) * 100),
+      percentage: Math.round((count / totalPageviews) * 100),
     }));
 
     setCountryData(aggregatedData);
@@ -37,29 +28,9 @@ export default function DemographicCard({ events }: { events: EventData[] }) {
     <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] sm:p-6">
       <div className="flex justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-800 ">Customers Demographic</h3>
+          <h3 className="text-lg font-semibold text-gray-800">Customers Demographic</h3>
           <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-600">Number of customers based on country</p>
         </div>
-
-        {/* <div className="relative inline-block">
-          <button onClick={toggleDropdown} className="dropdown-toggle">
-            More
-          </button>
-          <Dropdown isOpen={isOpen} onClose={closeDropdown} className="w-40 p-2">
-            <DropdownItem
-              onItemClick={closeDropdown}
-              className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-600 dark:hover:bg-white/5 dark:hover:text-gray-300"
-            >
-              View More
-            </DropdownItem>
-            <DropdownItem
-              onItemClick={closeDropdown}
-              className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-600 dark:hover:bg-white/5 dark:hover:text-gray-300"
-            >
-              Delete
-            </DropdownItem>
-          </Dropdown>
-        </div> */}
       </div>
 
       <div className="px-4 py-6 my-6 overflow-hidden border border-gray-200 rounded-2xl bg-gray-50 dark:border-gray-800 dark:bg-gray-900 sm:px-6">
@@ -75,18 +46,6 @@ export default function DemographicCard({ events }: { events: EventData[] }) {
         {countryData.map(({ country, count, percentage }) => (
           <div key={country} className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              {/* <div className="items-center w-full rounded-full max-w-8">
-                <Image
-                  width={48}
-                  height={48}
-                  src={`/images/country/${country.toLowerCase()}.svg`} // Dynamically load country flag
-                  alt={country}
-                  className="w-full"
-                />
-              </div> */}
-              {/* <p>
-                <span className="hidden text-gray-500 text-theme-sm dark:text-gray-600 sm:block">Country</span>
-              </p> */}
               <div>
                 <p className="font-semibold text-gray-800 text-theme-sm">{country}</p>
                 <span className="block text-gray-500 text-theme-xs dark:text-gray-600">{count} Customers</span>

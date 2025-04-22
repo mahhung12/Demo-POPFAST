@@ -18,8 +18,6 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         }
 
-        console.log('User:', user);
-
         const { domain, name, timezone } = await req.json();
 
         if (!domain) {

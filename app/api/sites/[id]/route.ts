@@ -22,6 +22,8 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       .eq("id", siteId)
       .single(); // Fetch a single site by ID
 
+    console.log("Fetched site data:", data); // Log the fetched data
+
     if (error) {
       return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }

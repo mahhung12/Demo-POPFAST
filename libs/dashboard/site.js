@@ -51,14 +51,13 @@ export async function getSiteById(siteId) {
       headers: { "Content-Type": "application/json" },
     });
 
-    const result = await response.json();
+    const { success, site } = await response.json();
 
-    if (!response.ok) {
-      throw new Error(result.error || "Failed to fetch site details");
+    if (!success) {
+      throw new Error("Failed to fetch site details");
     }
 
-    console.log("Site Details:", result.site);
-    return result.site;
+    return site;
   } catch (error) {
     console.error("Error fetching site details:", error);
     throw error;

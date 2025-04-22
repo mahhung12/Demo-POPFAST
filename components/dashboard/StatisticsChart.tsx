@@ -2,20 +2,14 @@
 import React, { useEffect, useState } from "react";
 import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
-import ChartTab from "../common/ChartTab";
+import ChartTab from "../common/SecondOptions/ChartTab";
 
 // Dynamically import the ReactApexChart component
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-interface EventData {
-  id: string;
-  event_type: string;
-  timestamp: string;
-}
-
-export default function StatisticsChart({ events }: { events: EventData[] }) {
+export default function StatisticsChart({ events }: { events: any }) {
   const [series, setSeries] = useState([
     { name: "Event Count", data: [] },
     { name: "Estimated", data: [] },
@@ -24,43 +18,42 @@ export default function StatisticsChart({ events }: { events: EventData[] }) {
 
   useEffect(() => {
     // Transform the response data into counts based on the selected option
-    const monthlySales = Array(12).fill(0);
-    const monthlyRevenue = Array(12).fill(0);
+    const monthlyCounts = Array(12).fill(0); // Initialize monthly counts
+    const monthlyEstimated = Array(12).fill(0); // Initialize monthly estimated values
 
-    events.forEach((event) => {
-      const month = new Date(event.timestamp).getMonth();
-      if (event.event_type === "checkout") {
-        monthlySales[month] += 1;
-        monthlyRevenue[month] += 50; // Example: Add $50 per checkout
-      }
+    events.pageviews.forEach((event) => {
+      const month = new Date(event.timestamp).getMonth(); // Get the month (0-11)
+
+      monthlyCounts[month] += 1; // Increment the count for the respective month
+      monthlyEstimated[month] += 50; // Example: Add $50 per pageview as an estimated value
     });
 
     if (selectedOption === "optionOne") {
       // Monthly data
       setSeries([
-        { name: "Event Count", data: monthlySales },
-        { name: "Estimated", data: monthlyRevenue },
+        { name: "Event Count", data: monthlyCounts },
+        { name: "Estimated", data: monthlyEstimated },
       ]);
     } else if (selectedOption === "optionTwo") {
       // Quarterly data
-      const quarterlySales = [0, 0, 0, 0];
-      const quarterlyRevenue = [0, 0, 0, 0];
+      const quarterlyCounts = [0, 0, 0, 0];
+      const quarterlyEstimated = [0, 0, 0, 0];
       for (let i = 0; i < 12; i++) {
         const quarter = Math.floor(i / 3); // Determine the quarter (0-3)
-        quarterlySales[quarter] += monthlySales[i];
-        quarterlyRevenue[quarter] += monthlyRevenue[i];
+        quarterlyCounts[quarter] += monthlyCounts[i];
+        quarterlyEstimated[quarter] += monthlyEstimated[i];
       }
       setSeries([
-        { name: "Event Count", data: quarterlySales },
-        { name: "Estimated", data: quarterlyRevenue },
+        { name: "Event Count", data: quarterlyCounts },
+        { name: "Estimated", data: quarterlyEstimated },
       ]);
     } else if (selectedOption === "optionThree") {
-      // Annually data
-      const annualSales = monthlySales.reduce((sum, val) => sum + val, 0);
-      const annualRevenue = monthlyRevenue.reduce((sum, val) => sum + val, 0);
+      // Annual data
+      const annualCount = monthlyCounts.reduce((sum, val) => sum + val, 0);
+      const annualEstimated = monthlyEstimated.reduce((sum, val) => sum + val, 0);
       setSeries([
-        { name: "Event Count", data: [annualSales] },
-        { name: "Estimated", data: [annualRevenue] },
+        { name: "Event Count", data: [annualCount] },
+        { name: "Estimated", data: [annualEstimated] },
       ]);
     }
   }, [events, selectedOption]);
@@ -127,8 +120,7 @@ export default function StatisticsChart({ events }: { events: EventData[] }) {
           ? ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
           : selectedOption === "optionTwo"
           ? ["Q1", "Q2", "Q3", "Q4"]
-          : // Year
-            ["2025", "2026", "2027", "2028", "2029", "2030"],
+          : ["2025"], // Annual data
       axisBorder: {
         show: false,
       },

@@ -45,6 +45,7 @@ export async function POST(req: Request) {
     browser,
     os,
     device,
+    ip_address: ip,
     timestamp: new Date().toISOString(),
   });
 
