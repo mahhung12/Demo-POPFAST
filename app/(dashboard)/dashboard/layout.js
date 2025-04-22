@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import config from "@/config";
 import { createClient } from "@/utils/supabase/server";
+import ButtonAccount from "@/components/ButtonAccount";
 
 // This is a server-side component to ensure the user is logged in.
 // If not, it will redirect to the login page.
@@ -18,5 +19,13 @@ export default async function LayoutPrivate({ children }) {
     redirect(config.auth.loginUrl);
   }
 
-  return <>{ children }</>;
+  return (
+    <div className="max-w-[1440px] px-16 py-8 mx-auto">
+      <div className="flex justify-between items-center mb-16">
+        <ButtonAccount />
+      </div>
+
+      {children}
+    </div>
+  );
 }

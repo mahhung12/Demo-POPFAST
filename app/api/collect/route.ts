@@ -27,15 +27,12 @@ export async function POST(req: Request) {
     ''; // localhost may be empty or "::1"
 
   // Step 2: Lookup country from IP
-  let country = '';
-  if (ip && ip !== '::1') {
-    try {
-      const geoRes = await fetch(`https://ipapi.co/${ip}/json`);
-      const geoData = await geoRes.json();
-      country = geoData.country_name || '';
-    } catch (err) {
-      console.error('Geo IP lookup failed:', err);
-    }
+  let geo = {};
+  try {
+    const res = await fetch(`https://ipwho.is/${ip}`);
+    geo = await res.json();
+  } catch (e) {
+    console.error('Geo lookup failed:', e);
   }
 
   // Step 3: Insert into Supabase
@@ -44,7 +41,7 @@ export async function POST(req: Request) {
     url,
     referrer,
     user_agent,
-    country,
+    country: geo['country'] + " | " + geo['country_code'] + " | " + geo['region'] + " | " + geo['city'],
     browser,
     os,
     device,

@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Tooltip } from "chart.js";
 import { Line } from "react-chartjs-2";
 
@@ -33,33 +33,33 @@ export default function DashboardSecondOption({ events }: { events: any[] }) {
     ],
   };
 
- const chartOptions = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "top" as const, // Explicitly specify the type as a valid literal
-    },
-    tooltip: {
-      mode: "index", // Explicitly cast to the expected type
-      intersect: false,
-    },
-  },
-  scales: {
-    x: {
-      title: {
-        display: true,
-        text: "Date",
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top" as const, // Explicitly specify the type as a valid literal
+      },
+      tooltip: {
+        mode: "index", // Explicitly cast to the expected type
+        intersect: false,
       },
     },
-    y: {
-      title: {
-        display: true,
-        text: "Number of Events",
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Date",
+        },
       },
-      beginAtZero: true,
+      y: {
+        title: {
+          display: true,
+          text: "Number of Events",
+        },
+        beginAtZero: true,
+      },
     },
-  },
-} as any;
+  } as any;
 
   // Process events to calculate top pages
   const topPages = events.reduce((acc: Record<string, number>, event) => {
@@ -68,7 +68,7 @@ export default function DashboardSecondOption({ events }: { events: any[] }) {
     return acc;
   }, {});
 
-const sortedTopPages = Object.entries(topPages)
+  const sortedTopPages = Object.entries(topPages)
     .sort(([, a], [, b]) => Number(b) - Number(a)) // Ensure values are numbers
     .slice(0, 5); // Limit to top 5 pages
 
@@ -77,12 +77,12 @@ const sortedTopPages = Object.entries(topPages)
       {/* Existing Block: Traffic Summary */}
       <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
         {[
-          ["UNIQUE VISITORS", new Set(events.map((event) => event.ip_address)).size || "N/A"], // Unique IPs
-          ["TOTAL VISITS", events.length || "N/A"], // Total events
-          ["TOTAL PAGEVIEWS", new Set(events.map((event) => event.url).filter((url) => url)).size || "N/A"], // Unique URLs
-          ["VIEWS PER VISIT", "N/A"], // Placeholder for views per visit
-          ["BOUNCE RATE", "N/A"], // Placeholder for bounce rate
-          ["VISIT DURATION", "N/A"], // Placeholder for visit duration
+          ["UNIQUE VISITORS", new Set(events.map((event) => event.ip_address)).size || "-"], // Unique IPs
+          ["TOTAL VISITS", events.length || "-"], // Total events
+          ["TOTAL PAGEVIEWS", new Set(events.map((event) => event.url).filter((url) => url)).size || "-"], // Unique URLs
+          ["VIEWS PER VISIT", "-"], // Placeholder for views per visit
+          ["BOUNCE RATE", "-"], // Placeholder for bounce rate
+          ["VISIT DURATION", "-"], // Placeholder for visit duration
         ].map(([label, current, previous], idx) => (
           <Card key={idx} className="text-center">
             <CardContent className="pt-4 pb-2">
@@ -103,38 +103,47 @@ const sortedTopPages = Object.entries(topPages)
 
       {/* Existing Block: Top Sources */}
       <div className="grid md:grid-cols-2 gap-4">
-        {/* Updated Block: Top Pages */}
+        {/* Top Pages Section */}
         <Card>
-          <CardContent className="pt-4">
+          <CardContent className="pt-4 min-h-[350px]">
             <h2 className="font-medium mb-4">Top Pages</h2>
-            <Table>
-              <TableBody>
-                {sortedTopPages.map(([page, visitors], idx) => (
-                  <TableRow key={idx}>
-                    <TableCell>{page}</TableCell>
-                    <TableCell className="text-right">{visitors as any}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            {sortedTopPages.length > 0 ? (
+              <Table>
+                <TableBody>
+                  {sortedTopPages.map(([page, visitors], idx) => (
+                    <TableRow key={idx}>
+                      <TableCell>{page}</TableCell>
+                      <TableCell className="text-right">{visitors as any}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="text-center text-gray-500 flex items-center justify-center h-full">No top pages available.</div>
+            )}
           </CardContent>
         </Card>
 
+        {/* Recent Events Section */}
         <Card>
-          <CardContent className="pt-4">
+          <CardContent className="pt-4 min-h-[350px]">
             <h2 className="font-medium mb-4">Recent Events</h2>
-            <Table>
-              <TableBody>
-                {events.map((event, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell>{event.event_type}</TableCell>
-                    <TableCell>{new Date(event.timestamp).toLocaleString()}</TableCell>
-                    <TableCell>{event.ip_address}</TableCell>
-                    <TableCell>{event.metadata?.provider || "N/A"}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            {events.length > 0 ? (
+              <Table>
+                <TableBody>
+                  {events.map((event, idx) => (
+                    <TableRow key={idx}>
+                      <TableCell>{event.event_type}</TableCell>
+                      <TableCell>{new Date(event.timestamp).toLocaleString()}</TableCell>
+                      <TableCell>{event.ip_address}</TableCell>
+                      <TableCell>{event.metadata?.provider || "-"}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="text-center text-gray-500 flex items-center justify-center h-full">No recent events available.</div>
+            )}
           </CardContent>
         </Card>
       </div>

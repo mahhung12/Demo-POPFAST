@@ -55,7 +55,7 @@ export default function StepOneForm({ formData, setSiteId, onNext }: StepOneForm
       const result = await createSite({
         domain,
         timezone: userTimezone,
-        name: "My Website", // Replace with a dynamic name if needed
+        name: domain,
       });
 
       if (result) {
@@ -73,8 +73,8 @@ export default function StepOneForm({ formData, setSiteId, onNext }: StepOneForm
   };
 
   return (
-    <div className="bg-[#3F3F46] rounded-lg overflow-hidden">
-      <div className="p-6 border-b border-zinc-800">
+    <div className="bg-inherit rounded-md border border-gray-200 overflow-hidden text-gray-700">
+      <div className="p-6 py-4 border-b border-gray-200">
         <h2 className="text-xl font-semibold">Add a new website</h2>
       </div>
 
@@ -84,13 +84,13 @@ export default function StepOneForm({ formData, setSiteId, onNext }: StepOneForm
             Domain
           </label>
           <div className="flex">
-            <span className="inline-flex items-center px-3 py-2 bg-zinc-800 border border-r-0 border-zinc-700 rounded-l-md text-sm">
+            <span className="inline-flex items-center px-3 py-2 bg-inherit border border-r-0 border-gray-200 bg-gray-200 rounded-l-md text-sm">
               https://
             </span>
             <input
               type="text"
               id="domain"
-              className="flex-1 bg-zinc-800 border border-zinc-700 rounded-r-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500 placeholder:text-zinc-400"
+              className="flex-1 bg-inherit border border-gray-200 rounded-r-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500 placeholder:text-zinc-400"
               placeholder="example.com"
               value={domain}
               onChange={(e) => setDomain(e.target.value)}
@@ -105,7 +105,7 @@ export default function StepOneForm({ formData, setSiteId, onNext }: StepOneForm
           <div className="flex">
             <select
               id="timezone"
-              className="flex-1 bg-zinc-800 border border-zinc-700 rounded-l-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500 text-white placeholder:text-zinc-400"
+              className="flex-1 bg-inherit border border-gray-200 rounded-l-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500 placeholder:text-zinc-400"
               value={userTimezone}
               onChange={handleTimezoneChange}
             >
@@ -115,7 +115,7 @@ export default function StepOneForm({ formData, setSiteId, onNext }: StepOneForm
                 </option>
               ))}
             </select>
-            <span className="inline-flex items-center px-3 py-2 bg-zinc-800 border border-l-0 border-zinc-700 rounded-r-md text-sm text-zinc-400">
+            <span className="inline-flex items-center px-3 py-2 bg-inherit border border-l-0 border-gray-200 rounded-r-md text-sm text-zinc-400">
               where time is {new Date().toLocaleTimeString("en-US", { timeZone: userTimezone })}
             </span>
           </div>
@@ -125,7 +125,7 @@ export default function StepOneForm({ formData, setSiteId, onNext }: StepOneForm
 
         <button
           type="button"
-          className={`w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-md transition-colors font-medium ${
+          className={`w-full bg-orange-400 hover:bg-orange-600 py-2 px-4 rounded-md transition-colors font-medium text-white ${
             isSubmitting ? "opacity-50 cursor-not-allowed" : ""
           }`}
           onClick={handleAddWebsite}

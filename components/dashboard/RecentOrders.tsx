@@ -22,7 +22,7 @@ export default function RecentOrders({ events }: { events: EventData[] }) {
     category: event.metadata?.provider || "Unknown Provider",
     timestamp: event.timestamp,
 
-    price: event.metadata?.plan || "N/A",
+    price: event.metadata?.plan || "-",
     status: event.event_type,
     // image: "/images/product/default-product.jpg", // Placeholder image
   }));
