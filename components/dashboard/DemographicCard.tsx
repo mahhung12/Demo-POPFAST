@@ -1,7 +1,6 @@
 "use client";
-
+import { useEffect, useState } from "react";
 import CountryMap from "./CountryMap";
-import { useState, useEffect } from "react";
 
 interface EventData {
   id: string;

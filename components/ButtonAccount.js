@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState, useEffect } from "react";
-import { Popover, Transition } from "@headlessui/react";
-import { createClient } from "@/libs/supabase/client";
 import apiClient from "@/libs/api";
+import { createClient } from "@/utils/supabase/client";
+import { Popover, Transition } from "@headlessui/react";
+import { useEffect, useState } from "react";
 
 // A button to show user some account actions
 //  1. Billing: open a Stripe Customer Portal to manage their billing (cancel subscription, update payment method, etc.).
@@ -52,38 +52,37 @@ const ButtonAccount = () => {
 
   return (
     <Popover className="relative z-10">
-      {({ open }) => (
+      { ({ open }) => (
         <>
           <Popover.Button className="btn">
-            {user?.user_metadata?.avatar_url ? (
+            { user?.user_metadata?.avatar_url ? (
               <img
-                src={user?.user_metadata?.avatar_url}
-                alt={"Profile picture"}
+                src={ user?.user_metadata?.avatar_url }
+                alt={ "Profile picture" }
                 className="w-6 h-6 rounded-full shrink-0"
                 referrerPolicy="no-referrer"
-                width={24}
-                height={24}
+                width={ 24 }
+                height={ 24 }
               />
             ) : (
               <span className="w-8 h-8 bg-base-100 flex justify-center items-center rounded-full shrink-0 capitalize">
-                {user?.email?.charAt(0)}
+                { user?.email?.charAt(0) }
               </span>
-            )}
+            ) }
 
-            {user?.user_metadata?.name ||
+            { user?.user_metadata?.name ||
               user?.email?.split("@")[0] ||
-              "Account"}
+              "Account" }
 
-            {isLoading ? (
+            { isLoading ? (
               <span className="loading loading-spinner loading-xs"></span>
             ) : (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
-                className={`w-5 h-5 duration-200 opacity-50 ${
-                  open ? "transform rotate-180 " : ""
-                }`}
+                className={ `w-5 h-5 duration-200 opacity-50 ${open ? "transform rotate-180 " : ""
+                  }` }
               >
                 <path
                   fillRule="evenodd"
@@ -91,7 +90,7 @@ const ButtonAccount = () => {
                   clipRule="evenodd"
                 />
               </svg>
-            )}
+            ) }
           </Popover.Button>
           <Transition
             enter="transition duration-100 ease-out"
@@ -106,7 +105,7 @@ const ButtonAccount = () => {
                 <div className="space-y-0.5 text-sm">
                   <button
                     className="flex items-center gap-2 hover:bg-base-300 duration-200 py-1.5 px-4 w-full rounded-lg font-medium"
-                    onClick={handleBilling}
+                    onClick={ handleBilling }
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -124,7 +123,7 @@ const ButtonAccount = () => {
                   </button>
                   <button
                     className="flex items-center gap-2 hover:bg-error/20 hover:text-error duration-200 py-1.5 px-4 w-full rounded-lg font-medium"
-                    onClick={handleSignOut}
+                    onClick={ handleSignOut }
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -150,7 +149,7 @@ const ButtonAccount = () => {
             </Popover.Panel>
           </Transition>
         </>
-      )}
+      ) }
     </Popover>
   );
 };

@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { createClient } from "@/libs/supabase/client";
 import toast from "react-hot-toast";
 import config from "@/config";
 import { trackEvent } from "@/libs/trackEvent";
+import { createClient } from "@/utils/supabase/client";
 
 // This a login/singup page for Supabase Auth.
 // Successfull login redirects to /api/auth/callback where the Code Exchange is processed (see app/api/auth/callback/route.js).
@@ -70,7 +70,7 @@ export default function Login() {
   };
 
   return (
-    <main className="p-8 md:p-24" data-theme={config.colors.theme}>
+    <main className="p-8 md:p-24" data-theme={ config.colors.theme }>
       <div className="text-center mb-4">
         <Link href="/" className="btn btn-ghost btn-sm">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
@@ -84,24 +84,24 @@ export default function Login() {
         </Link>
       </div>
       <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-center mb-12">
-        Sign-in to {config.appName}{" "}
+        Sign-in to { config.appName }{ " " }
       </h1>
 
       <div className="space-y-8 max-w-xl mx-auto">
         <button
           className="btn btn-block"
-          onClick={(e) => {
+          onClick={ (e) => {
             handleSignup(e, { type: "oauth", provider: "google" });
-            trackEvent("signup_oauth", {
-              email: email,
-              buttonId: "google_signup",
-              section: "Sign-up",
-              provider: "google",
-            });
-          }}
-          disabled={isLoading}
+            // trackEvent("signup_oauth", {
+            //   email: email,
+            //   buttonId: "google_signup",
+            //   section: "Sign-up",
+            //   provider: "google",
+            // });
+          } }
+          disabled={ isLoading }
         >
-          {isLoading ? (
+          { isLoading ? (
             <span className="loading loading-spinner loading-xs"></span>
           ) : (
             <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 48 48">
@@ -122,25 +122,25 @@ export default function Login() {
                 d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"
               />
             </svg>
-          )}
+          ) }
           Sign-up with Google
         </button>
 
         <div className="divider text-xs text-base-content/50 font-medium">OR</div>
 
-        <form className="form-control w-full space-y-4" onSubmit={(e) => handleSignup(e, { type: "magic_link" })}>
+        <form className="form-control w-full space-y-4" onSubmit={ (e) => handleSignup(e, { type: "magic_link" }) }>
           <input
             required
             type="email"
-            value={email}
+            value={ email }
             autoComplete="email"
             placeholder="tom@cruise.com"
             className="input input-bordered w-full placeholder:opacity-60"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={ (e) => setEmail(e.target.value) }
           />
 
-          <button className="btn btn-primary btn-block" disabled={isLoading || isDisabled} type="submit">
-            {isLoading && <span className="loading loading-spinner loading-xs"></span>}
+          <button className="btn btn-primary btn-block" disabled={ isLoading || isDisabled } type="submit">
+            { isLoading && <span className="loading loading-spinner loading-xs"></span> }
             Send Magic Link
           </button>
         </form>
