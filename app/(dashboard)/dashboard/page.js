@@ -39,26 +39,29 @@ export default async function Dashboard() {
         </button>
       </Link>
 
-      {!sites || sites.length === 0 ? (
+      { !sites || sites.length === 0 ? (
         <div className="max-w-[1440px]">
           <p className="mt-2">You don&#39;t have any sites yet. Create one to get started.</p>
         </div>
       ) : (
         <div className="w-full flex flex-wrap gap-4">
-          {sites.map((dashboard) => (
+          { sites.map((dashboard) => (
             <Link
-              key={dashboard.id}
-              href={`/dashboard/${dashboard.id}`}
+              key={ dashboard.id }
+              href={ `/dashboard/${dashboard.id}` }
               className="w-full sm:w-[calc(50%-8px)] md:w-[calc(33.333%-10.666px)]"
             >
               <div className="border rounded-md p-4 hover:shadow-lg transition-shadow cursor-pointer">
-                <h2 className="text-xl font-bold">{dashboard.name}</h2>
-                <p className="text-gray-600 mt-12">Total Visitors: {dashboard.pageviews.length || 0}</p>
+                <h2 className="text-xl font-bold">{ dashboard.name }</h2>
+                <p className="text-gray-600 mt-12">Total Visitors: { ' ' }
+                  {/* {dashboard.pageviews.length || 0} */ }
+                  <b>{ Array.from(new Set(dashboard.pageviews.map((event) => event.ip_address))).length }</b>
+                </p>
               </div>
             </Link>
-          ))}
+          )) }
         </div>
-      )}
+      ) }
     </div>
   );
 }

@@ -20,6 +20,8 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
         pageviews ( * )
       `)
       .eq("id", siteId)
+      // .order("timestamp", { foreignTable: "pageviews", ascending: false }) // Order pageviews by timestamp (desc)
+      .order("timestamp", { referencedTable: "pageviews", ascending: false }) // Order pageviews by timestamp (desc)
       .single(); // Fetch a single site by ID
 
     console.log("Fetched site data:", data); // Log the fetched data

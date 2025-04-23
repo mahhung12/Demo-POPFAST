@@ -10,16 +10,32 @@ interface EcommerceMetricsProps {
 
 export const EcommerceMetrics = ({ events }: EcommerceMetricsProps) => {
   // Calculate metrics
-  const totalEvents = events.pageviews.length;
+  const totalRecords = events.pageviews.length;
 
   // Get unique referrer links
-  const topReferrers = Array.from(new Set(events.pageviews.map((e) => e.referrer).filter(Boolean)));
+  const totalReferrers = Array.from(new Set(events.pageviews.map((e) => e.referrer).filter(Boolean)));
 
   // Get unique country names
-  const topCountries = Array.from(new Set(events.pageviews.map((e) => e.country).filter(Boolean)));
+  // const topCountries = Array.from(new Set(events.pageviews.map((e) => e.country).filter(Boolean)));
 
   // Use ip_address to calculate unique users
   const uniqueUsers = new Set(events.pageviews.map((e) => e.ip_address).filter(Boolean)).size;
+
+  const countryVisitCounts = events.pageviews.reduce((acc: Record<string, Set<string>>, pageview) => {
+    if (pageview.country && pageview.ip_address) {
+      if (!acc[pageview.country]) {
+        acc[pageview.country] = new Set();
+      }
+      acc[pageview.country].add(pageview.ip_address);
+    }
+    return acc;
+  }, {});
+
+  // Convert to an array of country and visit count
+  const topCountries = Object.entries(countryVisitCounts).map(([country, ips]) => ({
+    country,
+    visitCount: (ips as any).size,
+  }));
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
@@ -30,12 +46,12 @@ export const EcommerceMetrics = ({ events }: EcommerceMetricsProps) => {
         </div>
         <div className="flex items-end justify-between mt-5">
           <div>
-            <span className="text-sm text-gray-500 font-medium">Total Events</span>
-            <h4 className="mt-2 font-bold text-gray-800 text-title-sm">{totalEvents}</h4>
+            <span className="text-sm text-gray-500 font-medium">Total records</span>
+            <h4 className="mt-2 font-bold text-gray-800 text-title-sm">{totalRecords}</h4>
           </div>
           <Badge color="success">
             <Image src="/icons/arrow-up.svg" alt="Arrow Up Icon" width={16} height={16} className="inline-block mr-1" />
-            +{((totalEvents / 100) * 10).toFixed(2)}%
+            +{((totalRecords / 100) * 10).toFixed(2)}%
           </Badge>
         </div>
       </div>
@@ -64,11 +80,11 @@ export const EcommerceMetrics = ({ events }: EcommerceMetricsProps) => {
         </div>
         <div className="mt-5">
           <div>
-            <span className="text-sm text-gray-500 font-medium">Top Referrers</span>
-            <h4 className="mt-2 font-bold text-gray-800 text-title-sm">{topReferrers.length}</h4>
+            <span className="text-sm text-gray-500 font-medium">Total Referrers</span>
+            <h4 className="mt-2 font-bold text-gray-800 text-title-sm">{totalReferrers.length}</h4>
           </div>
           <ul className="mt-2 space-y-1">
-            {topReferrers.map((referrer: any, idx) => (
+            {totalReferrers.map((referrer: any, idx) => (
               <li key={idx} className="text-blue-600 truncate hover:underline">
                 <Link href={referrer} target="_blank" rel="noopener noreferrer">
                   {referrer}
@@ -86,13 +102,13 @@ export const EcommerceMetrics = ({ events }: EcommerceMetricsProps) => {
         </div>
         <div className="mt-5">
           <div>
-            <span className="text-sm text-gray-500 font-medium">Most country data</span>
+            <span className="text-sm text-gray-500 font-medium">Country-wise Unique Visits</span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm">{topCountries.length}</h4>
           </div>
           <ul className="mt-2 space-y-1">
-            {topCountries.map((country: string, idx) => (
+            {topCountries.map(({ country, visitCount }, idx) => (
               <li key={idx} className="text-gray-800 truncate">
-                {country}
+                {country} - {visitCount} visits
               </li>
             ))}
           </ul>

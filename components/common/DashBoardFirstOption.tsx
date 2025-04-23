@@ -3,6 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { totalUniqueUsers } from "@/libs/utils";
 import { CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement } from "chart.js";
 import { Line } from "react-chartjs-2";
 
@@ -79,18 +80,13 @@ export default function DashboardFirstOption({ trackingEvents = [] }: { tracking
       {/* Traffic Summary */}
       <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
         {[
-          ["UNIQUE VISITORS", new Set(trackingEvents.pageviews.map((pageview) => pageview.user_agent)).size || "-"], // Unique user agents
-          ["TOTAL VISITS", trackingEvents.pageviews.length || "-"], // Total pageviews
+          ["UNIQUE VISITORS", totalUniqueUsers(trackingEvents) || "-"],
+          ["TOTAL VISITS", trackingEvents.pageviews.length || "-"],
           [
             "TOTAL PAGEVIEWS",
             new Set(trackingEvents.pageviews.map((pageview) => pageview.url).filter((url) => url)).size || "-",
           ],
-          [
-            "VIEWS PER VISIT",
-            (
-              trackingEvents.length / new Set(trackingEvents.pageviews.map((pageview) => pageview.user_agent)).size
-            ).toFixed(2) || "-",
-          ], // Views per visit
+          ["VIEWS PER VISIT", (trackingEvents.pageviews.length / totalUniqueUsers(trackingEvents)).toFixed(2) || "-"], // Views per visit
           ["BOUNCE RATE", "-"], // Placeholder for bounce rate
           ["VISIT DURATION", "-"], // Placeholder for visit duration
         ].map(([label, current, previous], idx) => (

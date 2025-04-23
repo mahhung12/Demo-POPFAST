@@ -11,7 +11,7 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
 
 export default function StatisticsChart({ events }: { events: any }) {
   const [series, setSeries] = useState([
-    { name: "Event Count", data: [] },
+    { name: "Total Pageviews", data: [] },
     { name: "Estimated", data: [] },
   ]);
   const [selectedOption, setSelectedOption] = useState<"optionOne" | "optionTwo" | "optionThree">("optionOne");
@@ -31,7 +31,7 @@ export default function StatisticsChart({ events }: { events: any }) {
     if (selectedOption === "optionOne") {
       // Monthly data
       setSeries([
-        { name: "Event Count", data: monthlyCounts },
+        { name: "Total Pageviews", data: monthlyCounts },
         { name: "Estimated", data: monthlyEstimated },
       ]);
     } else if (selectedOption === "optionTwo") {
@@ -44,7 +44,7 @@ export default function StatisticsChart({ events }: { events: any }) {
         quarterlyEstimated[quarter] += monthlyEstimated[i];
       }
       setSeries([
-        { name: "Event Count", data: quarterlyCounts },
+        { name: "Total Pageviews", data: quarterlyCounts },
         { name: "Estimated", data: quarterlyEstimated },
       ]);
     } else if (selectedOption === "optionThree") {
@@ -52,7 +52,7 @@ export default function StatisticsChart({ events }: { events: any }) {
       const annualCount = monthlyCounts.reduce((sum, val) => sum + val, 0);
       const annualEstimated = monthlyEstimated.reduce((sum, val) => sum + val, 0);
       setSeries([
-        { name: "Event Count", data: [annualCount] },
+        { name: "Total Pageviews", data: [annualCount] },
         { name: "Estimated", data: [annualEstimated] },
       ]);
     }
@@ -152,7 +152,10 @@ export default function StatisticsChart({ events }: { events: any }) {
       <div className="flex flex-col gap-5 mb-6 sm:flex-row sm:justify-between">
         <div className="w-full">
           <h3 className="text-lg font-semibold">Statistics</h3>
-          <p className="mt-1 text-gray-500 text-theme-sm ">Target you’ve set for each month</p>
+          <p className="mt-1 text-gray-500 text-theme-sm ">
+            {/* $50 per pageview as an estimated value */}
+            The estimated values are calculated based on a fixed rate of $50 per pageview.
+          </p>
         </div>
         <div className="flex items-start w-full gap-3 sm:justify-end">
           <ChartTab selected={selectedOption} onChange={(option) => setSelectedOption(option)} />

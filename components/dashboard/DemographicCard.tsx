@@ -4,24 +4,64 @@ import CountryMap from "./CountryMap";
 
 export default function DemographicCard({ events }: { events: any }) {
   const [countryData, setCountryData] = useState<{ country: string; count: number; percentage: number }[]>([]);
+  const [mapMarkers, setMapMarkers] = useState<{ latLng: [number, number]; name: string }[]>([]);
 
   useEffect(() => {
-    // Aggregate data by country
-    const countryCounts: Record<string, number> = {};
-    events.pageviews.forEach((event) => {
-      const country = event.country || "Unknown"; // Default to "Unknown" if no country is provided
-      countryCounts[country] = (countryCounts[country] || 0) + 1;
-    });
+    const fetchGeoData = async (ip: string) => {
+      try {
+        const res = await fetch(`https://ipwho.is/${ip}`);
+        const geo = await res.json();
+        if (geo.success) {
+          return { lat: geo.latitude, lng: geo.longitude, country: geo.country };
+        }
+      } catch (e) {
+        console.error("Geo lookup failed:", e);
+      }
+      return { lat: 0, lng: 0, country: "Unknown" }; // Default values if lookup fails
+    };
 
-    // Calculate total pageviews and percentages
-    const totalPageviews = Object.values(countryCounts).reduce((sum, count) => sum + count, 0);
-    const aggregatedData = Object.entries(countryCounts).map(([country, count]) => ({
-      country: country || "Unknown country",
-      count,
-      percentage: Math.round((count / totalPageviews) * 100),
-    }));
+    const processData = async () => {
+      const countryCounts: Record<string, { count: number; latLng: [number, number] }> = {};
+      const ipToGeoCache: Record<string, { lat: number; lng: number; country: string }> = {};
 
-    setCountryData(aggregatedData);
+      for (const event of events.pageviews) {
+        const ipAddress = event.ip_address;
+        if (!ipAddress) continue;
+
+        // Check if IP is already cached
+        if (!ipToGeoCache[ipAddress]) {
+          const geoData = await fetchGeoData(ipAddress);
+          ipToGeoCache[ipAddress] = geoData;
+        }
+
+        const { lat, lng, country } = ipToGeoCache[ipAddress];
+        const countryName = country || "Unknown";
+
+        if (!countryCounts[countryName]) {
+          countryCounts[countryName] = { count: 0, latLng: [lat, lng] };
+        }
+        countryCounts[countryName].count += 1; // Increment count for the country
+      }
+
+      // Calculate total unique users and percentages
+      const totalUniqueUsers = Object.values(countryCounts).reduce((sum, data) => sum + data.count, 0);
+      const aggregatedData = Object.entries(countryCounts).map(([country, data]) => ({
+        country,
+        count: data.count,
+        percentage: Math.round((data.count / totalUniqueUsers) * 100),
+      }));
+
+      // Generate markers for the map
+      const markers = Object.entries(countryCounts).map(([country, data]) => ({
+        latLng: data.latLng,
+        name: country,
+      }));
+
+      setCountryData(aggregatedData);
+      setMapMarkers(markers);
+    };
+
+    processData();
   }, [events]);
 
   return (
@@ -38,7 +78,11 @@ export default function DemographicCard({ events }: { events: any }) {
           id="mapOne"
           className="mapOne map-btn -mx-4 -my-6 h-[212px] w-[252px] 2xsm:w-[307px] xsm:w-[358px] sm:-mx-6 md:w-[668px] lg:w-[634px] xl:w-[393px] 2xl:w-[554px]"
         >
-          <CountryMap />
+          {mapMarkers.length > 0 ? (
+            <CountryMap markers={mapMarkers} />
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-500">Loading map...</div>
+          )}
         </div>
       </div>
 

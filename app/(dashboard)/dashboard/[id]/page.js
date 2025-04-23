@@ -3,6 +3,8 @@
 import DashboardFirstOption from "@/components/common/DashBoardFirstOption";
 import DashboardSecondOption from "@/components/common/SecondOptions/DashBoardSecondOption";
 import { getSiteById } from "@/libs/dashboard/site.js";
+import { totalUniqueUsers } from "@/libs/utils";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -54,12 +56,28 @@ export default function Dashboard() {
 
   return (
     <div className="my-5 max-w-[1520px] mx-auto bg-white rounded-lg">
-      <div className="flex space-x-4 mb-8 w-full justify-between">
+      <Link href="/dashboard">
+        <button className="px-4 py-2 rounded-md bg-gray-200 border bg-inherit !text-black transition-colors flex items-center gap-2 hover:bg-gray-100">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={ 2 }
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H3m0 0l4.5-4.5M3 12l4.5 4.5" />
+          </svg>
+          Dashboard
+        </button>
+      </Link>
+
+      <div className="flex space-x-4 mb-8 w-full justify-between mt-4">
         <div className="flex justify-between items-center gap-4">
           <h1 className="text-2xl font-bold">{ trackingEvents.name }</h1>
           <span className="text-green-600 font-medium flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-red-600 animate-pulse"></div>
-            { Array.from(new Set(trackingEvents.pageviews.map((event) => event.ip_address))).length } current visitors
+            { totalUniqueUsers(trackingEvents) } current visitors
             {/* { trackingEvents.length } current visitors */ }
           </span>
         </div>
