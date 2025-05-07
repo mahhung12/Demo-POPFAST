@@ -10,6 +10,9 @@ const nextConfig = {
       "logos-world.net",
     ],
   },
+  async middleware() {
+    return ['/api/:path*']; 
+  },
 };
 
 module.exports = nextConfig;
