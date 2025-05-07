@@ -10,13 +10,17 @@
     }
 
     const siteId = scriptElement.getAttribute("data-website-id");
+    const dataDomain = scriptElement.getAttribute("data-domain"); // Get the domain from the data attribute
+    const srcUrl = new URL(scriptElement.src); // Parse the src URL
+    const baseUrl = srcUrl.origin; // Extract the base URL (protocol + domain)
+
     if (!siteId) {
       console.error("Missing data-website-id attribute on tracker script.");
       return;
     }
 
     await import("https://cdn.jsdelivr.net/npm/ua-parser-js@1.0.2/src/ua-parser.min.js");
-    const parser = new window.UAParser(); // ✅ Works correctly
+    const parser = new window.UAParser();
     const ua = parser.getResult();
 
     const payload = {
@@ -28,12 +32,11 @@
       browser: ua.browser.name || "",
       os: ua.os.name || "",
       device: ua.device.type || "desktop",
+      domain: dataDomain || "", // Include the domain from the data attribute
     };
 
-    const url = process.env.NEXT_PUBLIC_BASE_URL || "https://popfast.vercel.app";
-
-    // Uncomment to send the payload
-    navigator.sendBeacon(`${url}/api/collect`, JSON.stringify(payload));
+    // Send the payload
+    navigator.sendBeacon(`${baseUrl}/api/collect`, JSON.stringify(payload));
   } catch (err) {
     console.error("Error in tracker script:", err);
   }
