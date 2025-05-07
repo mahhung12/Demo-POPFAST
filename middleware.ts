@@ -5,10 +5,12 @@ export async function middleware(request: NextRequest) {
   // Handle preflight requests for CORS
   if (request.method === "OPTIONS") {
     return new NextResponse(null, {
+      status: 204,
       headers: {
-        "Access-Control-Allow-Origin": "*", // Allow all origins
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS", // Allow specific methods
-        "Access-Control-Allow-Headers": "Content-Type, Authorization", // Allow specific headers
+        "Access-Control-Allow-Origin": "*", // Or your frontend domain
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Max-Age": "86400", // Optional: cache preflight response for 1 day
       },
     });
   }
@@ -16,23 +18,14 @@ export async function middleware(request: NextRequest) {
   // Proceed with the existing session update logic
   const response = await updateSession(request);
 
-  // Add CORS headers to the response
-  response.headers.set("Access-Control-Allow-Origin", "*"); // Allow all origins
-  response.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS"); // Allow specific methods
-  response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization"); // Allow specific headers
+  // Add CORS headers to ALL responses
+  response.headers.set("Access-Control-Allow-Origin", "*"); // Or specific domain
+  response.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
   return response;
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)", "/api/:path*"],
 };
