@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+const stripe = new Stripe(process.env.STRIPE_SECRETED_KEY, {
   apiVersion: "2023-08-16",
 });
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -24,7 +24,7 @@ export async function POST(req) {
 
   // Create a private supabase client using the secret service_role API key
   const supabase = new SupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY
   );
 
