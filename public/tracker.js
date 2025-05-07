@@ -30,8 +30,10 @@
       device: ua.device.type || "desktop",
     };
 
+    const url = process.env.NEXT_PUBLIC_BASE_URL || "https://popfast.vercel.app";
+
     // Uncomment to send the payload
-    navigator.sendBeacon("http://localhost:3000/api/collect", JSON.stringify(payload));
+    navigator.sendBeacon(`${url}/api/collect`, JSON.stringify(payload));
   } catch (err) {
     console.error("Error in tracker script:", err);
   }

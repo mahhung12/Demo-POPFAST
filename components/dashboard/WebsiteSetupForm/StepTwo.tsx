@@ -21,9 +21,9 @@ export default function StepTwoForm({ siteId, formData, onBack }: StepTwoFormPro
 
   const scriptSnippet = `<script
   defer
-  data-website-id=${siteId}
-  data-domain=${formData.domain}
-  src="http://localhost:3000/tracker.js">
+  data-website-id="${siteId}"
+  data-domain="${formData.domain}"
+  src="${process.env.NEXT_PUBLIC_BASE_URL}/tracker.js">
 </script>`;
 
   const copyToClipboard = () => {
