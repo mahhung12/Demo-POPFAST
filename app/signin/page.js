@@ -21,7 +21,12 @@ export default function Login() {
 
     try {
       const { type, provider } = options;
-      const redirectURL = window.location.origin + "/api/auth/callback";
+
+      // Dynamically set the redirect URL based on the environment
+      const redirectURL =
+        process.env.NODE_ENV === "production"
+          ? process.env.NEXT_PUBLIC_REDIRECT_URL
+          : window.location.origin + "/api/auth/callback";
 
       if (type === "oauth") {
         await supabase.auth.signInWithOAuth({
@@ -30,14 +35,6 @@ export default function Login() {
             redirectTo: redirectURL,
           },
         });
-
-        // Track OAuth sign-up event
-        // trackEvent("signup_oauth", {
-        //   email: email,
-        //   buttonId: "oauth_signup",
-        //   section: "Sign-up",
-        //   provider,
-        // });
       } else if (type === "magic_link") {
         await supabase.auth.signInWithOtp({
           email,
@@ -47,22 +44,10 @@ export default function Login() {
         });
 
         toast.success("Check your emails!");
-
         setIsDisabled(true);
-
-        // Track magic link sign-up event
-        // trackEvent("signup_magic_link", {
-        //   email: email,
-        //   buttonId: "magic_link_signup",
-        //   section: "Sign-up",
-        //   provider: "email",
-        // });
       }
     } catch (error) {
       console.log(error);
-
-      // Track error event
-      // trackEvent("signup_error", { error: error.message });
     } finally {
       setIsLoading(false);
     }

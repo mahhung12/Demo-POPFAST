@@ -23,10 +23,7 @@ export async function POST(req) {
   let event;
 
   // Create a private supabase client using the secret service_role API key
-  const supabase = new SupabaseClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
+  const supabase = new SupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
   // verify Stripe event is legit
   try {
@@ -59,11 +56,7 @@ export async function POST(req) {
         let user;
         if (!userId) {
           // check if user already exists
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("email", customer.email)
-            .single();
+          const { data: profile } = await supabase.from("profiles").select("*").eq("email", customer.email).single();
           if (profile) {
             user = profile;
           } else {
@@ -76,11 +69,7 @@ export async function POST(req) {
           }
         } else {
           // find user by ID
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", userId)
-            .single();
+          const { data: profile } = await supabase.from("profiles").select("*").eq("id", userId).single();
 
           user = profile;
         }
@@ -121,14 +110,9 @@ export async function POST(req) {
         // The customer subscription stopped
         // ❌ Revoke access to the product
         const stripeObject = event.data.object;
-        const subscription = await stripe.subscriptions.retrieve(
-          stripeObject.id
-        );
+        const subscription = await stripe.subscriptions.retrieve(stripeObject.id);
 
-        await supabase
-          .from("profiles")
-          .update({ has_access: false })
-          .eq("customer_id", subscription.customer);
+        await supabase.from("profiles").update({ has_access: false }).eq("customer_id", subscription.customer);
         break;
       }
 
@@ -140,20 +124,13 @@ export async function POST(req) {
         const customerId = stripeObject.customer;
 
         // Find profile where customer_id equals the customerId (in table called 'profiles')
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("customer_id", customerId)
-          .single();
+        const { data: profile } = await supabase.from("profiles").select("*").eq("customer_id", customerId).single();
 
         // Make sure the invoice is for the same plan (priceId) the user subscribed to
         if (profile.price_id !== priceId) break;
 
         // Grant the profile access to your product. It's a boolean in the database, but could be a number of credits, etc...
-        await supabase
-          .from("profiles")
-          .update({ has_access: true })
-          .eq("customer_id", customerId);
+        await supabase.from("profiles").update({ has_access: true }).eq("customer_id", customerId);
 
         break;
       }
