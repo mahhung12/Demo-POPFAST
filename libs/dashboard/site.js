@@ -63,3 +63,23 @@ export async function getSiteById(siteId) {
     throw error;
   }
 }
+export async function deleteSite(siteId) {
+  try {
+    const response = await fetch(`/api/sites`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: siteId }), // Pass id in body
+    });
+
+    const { success } = await response.json();
+
+    if (!success) {
+      throw new Error("Failed to delete site");
+    }
+
+    return success;
+  } catch (error) {
+    console.error("Error deleting site:", error);
+    throw error;
+  }
+}

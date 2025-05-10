@@ -24,18 +24,6 @@ interface CountryMapProps {
 }
 
 const CountryMap: React.FC<CountryMapProps> = ({ mapColor, markers = [] }) => {
-  const markersValues = markers.map((marker) => ({
-    latLng: marker.latLng,
-    name: marker.name,
-    style: {
-      fill: marker.style?.fill || "#465FFF",
-      borderWidth: marker.style?.borderWidth || 1,
-      borderColor: marker.style?.borderColor || "#000",
-    },
-  }));
-  console.log("Markers Values:", markersValues);
-  console.log("Markers Values:", markersValues);
-
   return (
     <VectorMap
       map={worldMill}

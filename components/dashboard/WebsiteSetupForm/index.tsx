@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import StepOneForm from "./StepOne";
 import StepTwoForm from "./StepTwo";
+import { deleteSite } from "@/libs/dashboard/site";
 
 export default function WebsiteSetupForm() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -20,6 +21,19 @@ export default function WebsiteSetupForm() {
 
   const handleBack = () => {
     setCurrentStep((prev) => prev - 1);
+  };
+
+  // New: handle dashboard click and delete site if exists
+  const handleDashboardClick = async () => {
+    if (siteId) {
+      try {
+        await deleteSite(siteId);
+        setSiteId("");
+      } catch (error) {
+        console.error("Failed to delete site:", error);
+      }
+    }
+    // Navigate to dashboard (Link will handle navigation)
   };
 
   const renderStep = () => {
@@ -43,7 +57,11 @@ export default function WebsiteSetupForm() {
       <div className="w-full max-w-lg mx-auto">
         <div className="mb-8">
           <Link href="/dashboard">
-            <button className="px-4 py-2 rounded-md bg-gray-200 border bg-inherit !text-black transition-colors flex items-center gap-2 hover:bg-gray-100">
+            <button
+              className="px-4 py-2 rounded-md bg-gray-200 border bg-inherit !text-black transition-colors flex items-center gap-2 hover:bg-gray-100"
+              onClick={handleDashboardClick}
+              type="button"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-4 h-4"
